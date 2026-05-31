@@ -1,0 +1,13 @@
+{
+  "pages": [
+    "pages/index/index"
+  ],
+  "window": {
+    "navigationBarTitleText": "王者战力查询",
+    "navigationBarBackgroundColor": "#ff89ae",
+    "navigationBarTextStyle": "white",
+    "backgroundColor": "#fff4f8",
+    "backgroundTextStyle": "light"
+  },
+  "sitemapLocation": "sitemap.json"
+}

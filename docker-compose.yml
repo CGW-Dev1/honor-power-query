@@ -1,0 +1,21 @@
+services:
+  mysql:
+    image: mysql:8.4
+    container_name: honor-power-mysql
+    restart: unless-stopped
+    environment:
+      MYSQL_DATABASE: honor_power
+      MYSQL_USER: honor
+      MYSQL_PASSWORD: honor123
+      MYSQL_ROOT_PASSWORD: root123
+      TZ: Asia/Shanghai
+    ports:
+      - "3306:3306"
+    volumes:
+      - honor-power-mysql-data:/var/lib/mysql
+    command:
+      - --character-set-server=utf8mb4
+      - --collation-server=utf8mb4_unicode_ci
+
+volumes:
+  honor-power-mysql-data:

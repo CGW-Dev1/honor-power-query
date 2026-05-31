@@ -1,0 +1,191 @@
+<view class="page">
+  <view class="bg-orb orb-one"></view>
+  <view class="bg-orb orb-two"></view>
+
+  <view class="hero-head">
+    <view>
+      <view class="eyebrow">王者荣耀战力工具</view>
+      <view class="title">最低上榜战力查询</view>
+      <view class="subtitle">县标 / 市标 / 省标 / 小国标 / 大国标，一次看清</view>
+    </view>
+    <view class="status-pill">
+      <view class="status-dot"></view>
+      实时聚合
+    </view>
+  </view>
+
+  <view class="search-card">
+    <view class="search-box">
+      <text class="search-icon">搜</text>
+      <input
+        value="{{keyword}}"
+        placeholder="搜索英雄，如 李白、孙悟空"
+        confirm-type="search"
+        bindinput="onKeywordInput"
+        bindconfirm="searchHeroes"
+      />
+      <text wx:if="{{keyword}}" class="clear-text" bindtap="clearKeyword">清空</text>
+    </view>
+    <view class="search-button" bindtap="searchHeroes">搜索</view>
+  </view>
+
+  <view wx:if="{{selectedHero}}" class="selected-card">
+    <image class="hero-avatar" src="{{selectedHero.iconUrl}}" mode="aspectFill"></image>
+    <view class="selected-info">
+      <view class="selected-label">当前英雄</view>
+      <view class="selected-name">{{selectedHero.name}}</view>
+      <view class="selected-title">{{selectedHero.title}}</view>
+    </view>
+    <picker mode="selector" range="{{heroNames}}" value="{{selectedHeroIndex}}" bindchange="onHeroChange">
+      <view class="change-hero">更换</view>
+    </picker>
+  </view>
+
+  <scroll-view wx:if="{{heroes.length}}" class="hero-scroll" scroll-x>
+    <view class="hero-chip-track">
+      <view
+        wx:for="{{heroes}}"
+        wx:key="name"
+        class="hero-chip {{index === selectedHeroIndex ? 'hero-chip-active' : ''}}"
+        data-index="{{index}}"
+        bindtap="selectHero"
+      >
+        <text>{{item.name}}</text>
+      </view>
+    </view>
+  </scroll-view>
+
+  <view class="control-panel">
+    <view class="control-section">
+      <view class="section-title-row">
+        <view>
+          <view class="section-kicker">STEP 1</view>
+          <view class="section-name">选择系统</view>
+        </view>
+      </view>
+      <view class="segmented">
+        <view
+          wx:for="{{platforms}}"
+          wx:key="value"
+          class="segment {{index === platformIndex ? 'segment-active' : ''}}"
+          data-index="{{index}}"
+          bindtap="selectPlatform"
+        >
+          {{item.label}}
+        </view>
+      </view>
+    </view>
+
+    <view class="control-section">
+      <view class="section-kicker">STEP 2</view>
+      <view class="section-name">选择区服</view>
+      <view class="segmented">
+        <view
+          wx:for="{{channels}}"
+          wx:key="value"
+          class="segment {{index === channelIndex ? 'segment-active' : ''}}"
+          data-index="{{index}}"
+          bindtap="selectChannel"
+        >
+          {{item.label}}
+        </view>
+      </view>
+    </view>
+
+    <view class="control-section">
+      <view class="section-kicker">STEP 3</view>
+      <view class="section-name">查询渠道</view>
+      <view class="provider-list">
+        <view
+          wx:for="{{providers}}"
+          wx:key="value"
+          class="provider {{index === providerIndex ? 'provider-active' : ''}}"
+          data-index="{{index}}"
+          bindtap="selectProvider"
+        >
+          <view class="provider-name">{{item.displayName}}</view>
+          <view class="provider-desc">{{item.displayDesc}}</view>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <view class="query-bar">
+    <view class="query-desc">
+      <view class="query-desc-title">当前查询</view>
+      <view class="query-desc-text">{{lastQueryText}}</view>
+    </view>
+    <button class="query-button" loading="{{loading}}" disabled="{{loading || !selectedHero}}" bindtap="submitQuery">
+      {{loading ? "查询中" : "查最低战力"}}
+    </button>
+  </view>
+
+  <view wx:if="{{result}}" class="result-card">
+    <view class="result-top">
+      <view>
+        <view class="section-kicker">查询结果</view>
+        <view class="result-title">{{result.heroName}} 最低战力</view>
+      </view>
+      <view class="server-tag">{{result.platformLabel}} / {{result.channelLabel}}</view>
+    </view>
+    <view class="update-time">更新：{{result.updatedAt}} · {{providers[providerIndex].displayName}}</view>
+
+    <view class="summary-card">
+      <view class="summary-main">
+        <view class="summary-label">最低县标</view>
+        <view class="summary-power">{{result.rankings[0].power}}</view>
+        <view class="summary-region">{{result.rankings[0].regionName}}</view>
+      </view>
+      <view class="summary-tip">点击下方任意标卡，可查看前 10 个低分位置</view>
+    </view>
+
+    <view class="ranking-list">
+      <view
+        wx:for="{{result.rankings}}"
+        wx:key="level"
+        class="ranking-card"
+        data-index="{{index}}"
+        bindtap="openRanking"
+      >
+        <view class="ranking-head">
+          <view class="ranking-label">{{item.levelLabel}}</view>
+          <view class="ranking-arrow">查看</view>
+        </view>
+        <view class="ranking-power">{{item.power}}</view>
+        <view class="ranking-region">{{item.regionName}}</view>
+        <view class="ranking-sub">前10低分位置</view>
+      </view>
+    </view>
+
+    <view class="notice">{{result.notice}}</view>
+  </view>
+
+  <view wx:else class="empty-card">
+    <view class="empty-badge">待查询</view>
+    <view>
+      <view class="empty-title">还没有查询结果</view>
+      <view class="empty-text">选好英雄、系统和区服后，点击底部按钮查看各级标最低分。</view>
+    </view>
+  </view>
+
+  <view wx:if="{{activeRanking}}" class="modal-mask" bindtap="closeRanking">
+    <view class="modal-panel" catchtap="noop">
+      <view class="modal-handle"></view>
+      <view class="modal-header">
+        <view>
+          <view class="section-kicker">前10低分位置</view>
+          <view class="modal-title">{{activeRanking.levelLabel}}</view>
+        </view>
+        <button size="mini" bindtap="closeRanking">关闭</button>
+      </view>
+
+      <view class="placement-list">
+        <view wx:for="{{activeRanking.placements}}" wx:key="rank" class="placement-row">
+          <view class="placement-rank">#{{item.rank}}</view>
+          <view class="placement-region">{{item.regionName}}</view>
+          <view class="placement-power">{{item.power}}</view>
+        </view>
+      </view>
+    </view>
+  </view>
+</view>

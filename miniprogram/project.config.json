@@ -1,0 +1,15 @@
+{
+  "appid": "touristappid",
+  "projectname": "honor-power-query-miniprogram",
+  "description": "王者荣耀英雄战力查询小程序",
+  "compileType": "miniprogram",
+  "libVersion": "3.7.12",
+  "miniprogramRoot": "./",
+  "setting": {
+    "es6": true,
+    "enhance": true,
+    "postcss": true,
+    "minified": true,
+    "urlCheck": false
+  }
+}

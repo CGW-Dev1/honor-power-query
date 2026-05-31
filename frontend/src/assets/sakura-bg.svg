@@ -1,0 +1,56 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 900" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <radialGradient id="petal" cx="50%" cy="45%" r="60%">
+      <stop offset="0" stop-color="#fff8fb"/>
+      <stop offset="0.55" stop-color="#ffc7d8"/>
+      <stop offset="1" stop-color="#ff8fb6"/>
+    </radialGradient>
+    <filter id="soft" x="-30%" y="-30%" width="160%" height="160%">
+      <feGaussianBlur stdDeviation="1.2"/>
+    </filter>
+    <g id="blossom">
+      <ellipse rx="17" ry="34" fill="url(#petal)" transform="rotate(0) translate(0 -22)"/>
+      <ellipse rx="17" ry="34" fill="url(#petal)" transform="rotate(72) translate(0 -22)"/>
+      <ellipse rx="17" ry="34" fill="url(#petal)" transform="rotate(144) translate(0 -22)"/>
+      <ellipse rx="17" ry="34" fill="url(#petal)" transform="rotate(216) translate(0 -22)"/>
+      <ellipse rx="17" ry="34" fill="url(#petal)" transform="rotate(288) translate(0 -22)"/>
+      <circle r="7" fill="#ffd56f"/>
+      <circle r="3" fill="#e46a96"/>
+    </g>
+    <g id="petal-fall">
+      <path d="M0,-16 C16,-8 18,9 0,20 C-18,9 -16,-8 0,-16Z" fill="#ffb5ca" opacity="0.62"/>
+    </g>
+  </defs>
+
+  <rect width="1600" height="900" fill="none"/>
+
+  <g opacity="0.58" filter="url(#soft)">
+    <path d="M1120,-50 C1180,85 1275,150 1420,168 C1510,179 1580,213 1645,288" fill="none" stroke="#8a4b4d" stroke-width="24" stroke-linecap="round"/>
+    <path d="M1240,116 C1310,64 1395,55 1470,82" fill="none" stroke="#8a4b4d" stroke-width="15" stroke-linecap="round"/>
+    <path d="M1330,166 C1408,188 1460,250 1492,340" fill="none" stroke="#8a4b4d" stroke-width="13" stroke-linecap="round"/>
+    <path d="M1180,40 C1152,122 1088,186 1000,220" fill="none" stroke="#8a4b4d" stroke-width="12" stroke-linecap="round"/>
+  </g>
+
+  <g opacity="0.92">
+    <use href="#blossom" transform="translate(1200 92) scale(1.05) rotate(12)"/>
+    <use href="#blossom" transform="translate(1308 92) scale(0.82) rotate(-18)"/>
+    <use href="#blossom" transform="translate(1408 128) scale(1.18) rotate(24)"/>
+    <use href="#blossom" transform="translate(1488 210) scale(0.84) rotate(-30)"/>
+    <use href="#blossom" transform="translate(1328 210) scale(0.74) rotate(36)"/>
+    <use href="#blossom" transform="translate(1128 166) scale(0.72) rotate(-16)"/>
+    <use href="#blossom" transform="translate(1030 220) scale(0.58) rotate(20)"/>
+  </g>
+
+  <g opacity="0.48">
+    <use href="#petal-fall" transform="translate(150 126) rotate(28) scale(0.7)"/>
+    <use href="#petal-fall" transform="translate(308 210) rotate(-18) scale(0.55)"/>
+    <use href="#petal-fall" transform="translate(560 104) rotate(44) scale(0.72)"/>
+    <use href="#petal-fall" transform="translate(760 256) rotate(12) scale(0.5)"/>
+    <use href="#petal-fall" transform="translate(932 132) rotate(-36) scale(0.56)"/>
+    <use href="#petal-fall" transform="translate(1160 330) rotate(26) scale(0.52)"/>
+    <use href="#petal-fall" transform="translate(1338 424) rotate(-16) scale(0.48)"/>
+    <use href="#petal-fall" transform="translate(220 640) rotate(-26) scale(0.48)"/>
+    <use href="#petal-fall" transform="translate(640 720) rotate(22) scale(0.42)"/>
+    <use href="#petal-fall" transform="translate(1040 700) rotate(-30) scale(0.46)"/>
+  </g>
+</svg>
