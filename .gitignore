@@ -5,3 +5,4 @@ frontend/dist/
 .vscode/
 *.iml
 *.log
+dist-apk/
