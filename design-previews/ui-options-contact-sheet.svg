@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="1282" height="588" viewBox="0 0 1282 588">
+  <rect x="0" y="0" width="1282" height="588" rx="0" fill="#f7f2f5" stroke="none" stroke-width="1" opacity="1" />
+  <text x="22" y="38" font-family="PingFang SC", "Microsoft YaHei", Arial, sans-serif font-size="28" font-weight="900" fill="#2f2731" text-anchor="start" opacity="1" letter-spacing="0">王者战力查询系统 UI 方向预览</text>
+  <image href="./option-a-esports-dashboard.svg" x="22" y="70" width="230" height="492" preserveAspectRatio="xMidYMid meet"/><image href="./option-b-hero-card.svg" x="274" y="70" width="230" height="492" preserveAspectRatio="xMidYMid meet"/><image href="./option-c-minimal-tool.svg" x="526" y="70" width="230" height="492" preserveAspectRatio="xMidYMid meet"/><image href="./option-d-sakura-soft.svg" x="778" y="70" width="230" height="492" preserveAspectRatio="xMidYMid meet"/><image href="./option-e-map-ranking.svg" x="1030" y="70" width="230" height="492" preserveAspectRatio="xMidYMid meet"/>
+</svg>
