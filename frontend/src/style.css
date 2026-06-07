@@ -214,11 +214,10 @@ button {
 .hero-summary b {
   display: block;
   margin: 2px 0;
-  overflow: hidden;
   color: #fff;
   font-size: 21px;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+  line-height: 1.22;
+  overflow-wrap: anywhere;
 }
 
 .search-card,
@@ -406,6 +405,7 @@ select {
   color: #342936;
   font-size: 22px;
   line-height: 1.2;
+  overflow-wrap: anywhere;
 }
 
 .result-head strong {
@@ -489,6 +489,7 @@ select {
   color: #3b2d37;
   font-size: 13px;
   line-height: 1.35;
+  overflow-wrap: anywhere;
 }
 
 .ranking-card small {
@@ -581,8 +582,8 @@ select {
 
 .placement-row {
   display: grid;
-  grid-template-columns: 50px minmax(0, 1fr) 86px;
-  align-items: center;
+  grid-template-columns: 46px minmax(0, 1fr) 82px;
+  align-items: start;
   gap: 8px;
   padding: 12px;
   border-radius: 16px;
@@ -595,13 +596,14 @@ select {
 }
 
 .placement-row span {
-  overflow: hidden;
   color: #342936;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+  line-height: 1.35;
+  overflow-wrap: anywhere;
+  word-break: break-word;
 }
 
 .placement-row strong {
+  padding-top: 1px;
   text-align: right;
 }
 

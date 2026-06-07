@@ -16,7 +16,7 @@ const error = ref('')
 
 const currentHero = computed(() => heroes.value.find((hero) => hero.name === selectedHero.value))
 const hasResult = computed(() => result.value?.rankings?.length)
-const resultMode = computed(() => (result.value?.sourceType === 'OFFLINE' ? '离线兜底' : '实时聚合'))
+const resultMode = computed(() => (result.value?.sourceType === 'OFFLINE' ? '备用结果' : '实时查询'))
 const heroCountText = computed(() => `${heroes.value.length || 130} 位英雄`)
 
 onMounted(async () => {
@@ -90,7 +90,7 @@ function closeRanking() {
           <span class="brand-mark">战</span>
           <div>
             <strong>王者战力查询</strong>
-            <small>无后端 APK 版</small>
+            <small>全英雄最低战力</small>
           </div>
         </div>
         <span class="live-pill"><i></i>{{ resultMode }}</span>
@@ -99,7 +99,7 @@ function closeRanking() {
       <div class="headline">
         <p>Honor Power Index</p>
         <h1>最低上榜战力，一次看清</h1>
-        <span>县标 / 市标 / 省标 / 小国标 / 大国标，安装后即可查询。</span>
+        <span>县标 / 市标 / 省标 / 小国标 / 大国标，五档榜单一次看清。</span>
       </div>
 
       <div class="hero-summary" v-if="currentHero">
@@ -238,7 +238,7 @@ function closeRanking() {
     <section class="empty-card" v-else>
       <div>查</div>
       <h2>选择英雄后开始查询</h2>
-      <p>应用已内置英雄库，不需要启动电脑后端服务。</p>
+      <p>选择英雄、系统和区服后，查看各级最低上榜战力。</p>
     </section>
 
     <div v-if="selectedRanking" class="sheet-mask" @click.self="closeRanking">
