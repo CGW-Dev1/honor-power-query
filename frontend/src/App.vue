@@ -2,7 +2,7 @@
 import { computed, onMounted, ref } from 'vue'
 import { getOptions, queryPower, searchHeroes } from './api'
 
-const options = ref({ platforms: [], channels: [] })
+const options = ref({ platforms: [], channels: [], providers: [] })
 const heroes = ref([])
 const keyword = ref('')
 const selectedHero = ref('')
@@ -14,8 +14,10 @@ const selectedRanking = ref(null)
 const loading = ref(false)
 const error = ref('')
 
-const hasResult = computed(() => result.value && result.value.rankings?.length)
 const currentHero = computed(() => heroes.value.find((hero) => hero.name === selectedHero.value))
+const hasResult = computed(() => result.value?.rankings?.length)
+const resultMode = computed(() => (result.value?.sourceType === 'OFFLINE' ? '离线兜底' : '实时聚合'))
+const heroCountText = computed(() => `${heroes.value.length || 130} 位英雄`)
 
 onMounted(async () => {
   try {
@@ -32,15 +34,11 @@ let searchTimer
 function onKeywordInput() {
   clearTimeout(searchTimer)
   searchTimer = setTimeout(async () => {
-    try {
-      heroes.value = await searchHeroes(keyword.value)
-      if (!heroes.value.some((hero) => hero.name === selectedHero.value)) {
-        selectedHero.value = heroes.value[0]?.name || ''
-      }
-    } catch (exception) {
-      error.value = exception.message
+    heroes.value = await searchHeroes(keyword.value)
+    if (!heroes.value.some((hero) => hero.name === selectedHero.value)) {
+      selectedHero.value = heroes.value[0]?.name || ''
     }
-  }, 180)
+  }, 120)
 }
 
 async function submitQuery() {
@@ -67,9 +65,12 @@ async function submitQuery() {
   }
 }
 
+function selectHero(hero) {
+  selectedHero.value = hero.name
+}
+
 function formatTime(value) {
-  if (!value) return '--'
-  return value.replace('T', ' ')
+  return value ? String(value).replace('T', ' ') : '--'
 }
 
 function openRanking(item) {
@@ -82,163 +83,176 @@ function closeRanking() {
 </script>
 
 <template>
-  <main class="page-shell">
-    <div class="sakura-branch sakura-branch-top" aria-hidden="true"></div>
-    <div class="sakura-branch sakura-branch-bottom" aria-hidden="true"></div>
-    <div class="falling-petals" aria-hidden="true">
-      <span></span>
-      <span></span>
-      <span></span>
-      <span></span>
-      <span></span>
-      <span></span>
-      <span></span>
-      <span></span>
-    </div>
-    <section class="dashboard">
-      <header class="topbar">
+  <main class="app-shell">
+    <section class="hero-panel">
+      <div class="top-row">
         <div class="brand">
-          <span class="brand-mark">樱</span>
+          <span class="brand-mark">战</span>
           <div>
-            <strong>王者荣耀英雄战力查询</strong>
-            <small>县标 / 市标 / 省标 / 小国标最低战力 · 樱花版</small>
+            <strong>王者战力查询</strong>
+            <small>无后端 APK 版</small>
           </div>
         </div>
-        <span class="status"><i></i> 实时供应商查询</span>
-      </header>
+        <span class="live-pill"><i></i>{{ resultMode }}</span>
+      </div>
 
-      <section class="hero-strip">
+      <div class="headline">
+        <p>Honor Power Index</p>
+        <h1>最低上榜战力，一次看清</h1>
+        <span>县标 / 市标 / 省标 / 小国标 / 大国标，安装后即可查询。</span>
+      </div>
+
+      <div class="hero-summary" v-if="currentHero">
+        <img :src="currentHero.iconUrl" :alt="currentHero.name" />
         <div>
-          <p class="eyebrow">SAKURA POWER INDEX</p>
-          <h1>全英雄最低战力查询</h1>
-          <p>选择接口、英雄和分区后查询。点击任意标卡可看前 10 个低分位置。</p>
+          <span>当前英雄</span>
+          <b>{{ currentHero.name }}</b>
+          <small>{{ currentHero.title }}</small>
         </div>
-        <div class="hero-stats">
-          <div><b>{{ heroes.length || 130 }}</b><span>英雄</span></div>
-          <div><b>4</b><span>榜单等级</span></div>
-          <div><b>4</b><span>平台分区</span></div>
-        </div>
-      </section>
-
-      <form class="query-card" @submit.prevent="submitQuery">
-          <div class="section-heading">
-            <p>QUERY PANEL</p>
-            <h2>查询条件</h2>
-          </div>
-
-          <label class="field">
-            <span>搜索英雄</span>
-            <input
-              v-model="keyword"
-              type="search"
-              placeholder="输入英雄名称筛选"
-              @input="onKeywordInput"
-            />
-          </label>
-
-          <label class="field">
-            <span>选择英雄</span>
-            <select v-model="selectedHero">
-              <option value="" disabled>请选择英雄</option>
-              <option v-for="hero in heroes" :key="hero.name" :value="hero.name">
-                {{ hero.name }} - {{ hero.title }}
-              </option>
-            </select>
-          </label>
-
-          <label class="field compact-field">
-            <span>系统</span>
-            <select v-model="platform">
-              <option v-for="item in options.platforms" :key="item.value" :value="item.value">
-                {{ item.label }}
-              </option>
-            </select>
-          </label>
-
-          <label class="field compact-field">
-            <span>分区</span>
-            <select v-model="channel">
-              <option v-for="item in options.channels" :key="item.value" :value="item.value">
-                {{ item.label }}
-              </option>
-            </select>
-          </label>
-
-          <label class="field">
-            <span>数据接口</span>
-            <select v-model="provider">
-              <option v-for="item in options.providers" :key="item.value" :value="item.value">
-                {{ item.label }}
-              </option>
-            </select>
-          </label>
-
-          <div v-if="currentHero" class="hero-preview">
-            <img :src="currentHero.iconUrl" :alt="currentHero.name" />
-            <div>
-              <b>{{ currentHero.name }}</b>
-              <span>{{ currentHero.title }}</span>
-            </div>
-          </div>
-
-          <button class="query-button" :disabled="loading" type="submit">
-            {{ loading ? '查询中...' : '查询最低战力' }}
-          </button>
-
-          <p v-if="error" class="message error-message">{{ error }}</p>
-        </form>
-
-      <section class="workspace">
-        <section class="results-panel">
-          <div v-if="hasResult" class="results">
-            <div class="result-title">
-              <div>
-                <p>POWER SNAPSHOT</p>
-                <h2>{{ result.heroName }} · 最低战力</h2>
-              </div>
-              <div class="result-meta">
-                <b>{{ result.platformLabel }} / {{ result.channelLabel }}</b>
-                <span>更新时间：{{ formatTime(result.updatedAt) }}</span>
-                <span>来源：{{ result.sourceName }}</span>
-              </div>
-            </div>
-
-            <div class="ranking-grid">
-              <article
-                v-for="(item, index) in result.rankings"
-                :key="item.level"
-                class="ranking-card"
-                tabindex="0"
-                role="button"
-                @click="openRanking(item)"
-                @keyup.enter="openRanking(item)"
-              >
-                <span class="rank-number">0{{ index + 1 }}</span>
-                <p>{{ item.levelLabel }}</p>
-                <h3>{{ item.power.toLocaleString() }}</h3>
-                <div><span>{{ item.regionName }}</span><b>点击查看前10低分位置</b></div>
-              </article>
-            </div>
-
-            <p class="notice">{{ result.notice }}</p>
-          </div>
-
-          <div v-else class="empty-state">
-            <div class="empty-icon">+</div>
-            <h3>选择英雄后开始查询</h3>
-            <p>结果会展示县标、市标、省标和小国标最低战力。</p>
-          </div>
-        </section>
-      </section>
+        <em>{{ heroCountText }}</em>
+      </div>
     </section>
 
-    <div v-if="selectedRanking" class="detail-mask" @click.self="closeRanking">
-      <section class="detail-panel">
-        <button class="close-button" type="button" @click="closeRanking">关闭</button>
-        <p class="eyebrow">LOWEST TOP 10</p>
+    <section class="search-card">
+      <label class="search-box">
+        <span>搜</span>
+        <input
+          v-model="keyword"
+          type="search"
+          placeholder="搜索英雄，如 李白、孙悟空"
+          @input="onKeywordInput"
+        />
+      </label>
+
+      <div class="hero-chips" v-if="heroes.length">
+        <button
+          v-for="hero in heroes.slice(0, 12)"
+          :key="hero.name"
+          :class="{ active: hero.name === selectedHero }"
+          type="button"
+          @click="selectHero(hero)"
+        >
+          {{ hero.name }}
+        </button>
+      </div>
+
+      <label class="select-line">
+        <span>选择英雄</span>
+        <select v-model="selectedHero">
+          <option value="" disabled>请选择英雄</option>
+          <option v-for="hero in heroes" :key="hero.name" :value="hero.name">
+            {{ hero.name }} - {{ hero.title }}
+          </option>
+        </select>
+      </label>
+    </section>
+
+    <section class="control-card">
+      <div class="step">
+        <span>01 系统</span>
+        <div class="segmented">
+          <button
+            v-for="item in options.platforms"
+            :key="item.value"
+            :class="{ active: item.value === platform }"
+            type="button"
+            @click="platform = item.value"
+          >
+            {{ item.label }}
+          </button>
+        </div>
+      </div>
+
+      <div class="step">
+        <span>02 区服</span>
+        <div class="segmented">
+          <button
+            v-for="item in options.channels"
+            :key="item.value"
+            :class="{ active: item.value === channel }"
+            type="button"
+            @click="channel = item.value"
+          >
+            {{ item.label }}
+          </button>
+        </div>
+      </div>
+
+      <div class="step">
+        <span>03 查询渠道</span>
+        <div class="provider-list">
+          <button
+            v-for="item in options.providers"
+            :key="item.value"
+            :class="{ active: item.value === provider }"
+            type="button"
+            @click="provider = item.value"
+          >
+            <b>{{ item.label }}</b>
+            <small>{{ item.description }}</small>
+          </button>
+        </div>
+      </div>
+
+      <button class="primary-button" :disabled="loading" type="button" @click="submitQuery">
+        {{ loading ? '正在查询...' : '查询最低战力' }}
+      </button>
+
+      <p v-if="error" class="error-message">{{ error }}</p>
+    </section>
+
+    <section class="result-card" v-if="hasResult">
+      <div class="result-head">
+        <div>
+          <span>查询结果</span>
+          <h2>{{ result.heroName }} · 最低战力</h2>
+        </div>
+        <strong>{{ result.platformLabel }} / {{ result.channelLabel }}</strong>
+      </div>
+
+      <div class="meta-row">
+        <span>更新：{{ formatTime(result.updatedAt) }}</span>
+        <span>{{ result.sourceName }}</span>
+      </div>
+
+      <div class="ranking-grid">
+        <article
+          v-for="item in result.rankings"
+          :key="item.level"
+          class="ranking-card"
+          tabindex="0"
+          role="button"
+          @click="openRanking(item)"
+          @keyup.enter="openRanking(item)"
+        >
+          <span class="card-label">{{ item.levelLabel }}</span>
+          <b>{{ item.power.toLocaleString() }}</b>
+          <strong>{{ item.regionName }}</strong>
+          <small>点击查看低分位置</small>
+        </article>
+      </div>
+
+      <p class="notice">{{ result.notice }}</p>
+    </section>
+
+    <section class="empty-card" v-else>
+      <div>查</div>
+      <h2>选择英雄后开始查询</h2>
+      <p>应用已内置英雄库，不需要启动电脑后端服务。</p>
+    </section>
+
+    <div v-if="selectedRanking" class="sheet-mask" @click.self="closeRanking">
+      <section class="bottom-sheet">
+        <i></i>
+        <button type="button" @click="closeRanking">关闭</button>
+        <p>LOWEST POSITIONS</p>
         <h2>{{ result.heroName }} · {{ selectedRanking.levelLabel }}</h2>
-        <div class="detail-list">
-          <div v-for="item in selectedRanking.placements" :key="`${item.rank}-${item.regionName}`" class="detail-row">
+        <div class="placement-list">
+          <div
+            v-for="item in selectedRanking.placements"
+            :key="`${item.rank}-${item.regionName}`"
+            class="placement-row"
+          >
             <b>#{{ item.rank }}</b>
             <span>{{ item.regionName }}</span>
             <strong>{{ item.power.toLocaleString() }}</strong>

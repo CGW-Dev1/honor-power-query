@@ -1,5 +1,10 @@
 {
   "appId": "com.cgwdev.honorpower",
-  "appName": "honor-power-query",
-  "webDir": "dist"
+  "appName": "王者战力查询",
+  "webDir": "dist",
+  "plugins": {
+    "CapacitorHttp": {
+      "enabled": true
+    }
+  }
 }
