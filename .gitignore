@@ -5,4 +5,9 @@ frontend/dist/
 .vscode/
 *.iml
 *.log
-dist-apk/
+dist-apk/*
+!dist-apk/
+!dist-apk/honor-power-query-polished-release.apk
+dist-apk/*.jks
+dist-apk/*.idsig
+dist-apk/*aligned*.apk
